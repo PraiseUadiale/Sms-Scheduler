@@ -1,0 +1,6 @@
+twilio:
+  account_sid: <Your Credentials from Twilio>
+  auth_token: <Your Credentials from Twilio>
+  trial_number: <Your Credentials from Twilio>
+
+##Remove to remove credentials before sending

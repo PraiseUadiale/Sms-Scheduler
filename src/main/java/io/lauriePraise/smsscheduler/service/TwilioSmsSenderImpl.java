@@ -1,5 +1,6 @@
 package io.lauriePraise.smsscheduler.service;
 
+import static io.lauriePraise.smsscheduler.utils.SmsUtils.isPhoneNumberValid;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import io.lauriePraise.smsscheduler.config.TwilioConfiguration;
@@ -7,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 /** Created by Puadi on April, 2022 */
 @Component
@@ -25,22 +25,22 @@ public class TwilioSmsSenderImpl implements SmsSender {
   @Override
   public void sendSms(SMSRequest smsRequest) {
 
-    if (isPhoneNumberValid(smsRequest.getPhoneNumber())) {
-
-      PhoneNumber to = new PhoneNumber(smsRequest.getPhoneNumber());
+    String phoneNumber = smsRequest.getPhoneNumber()
+        .trim()
+        .stripLeading()
+        .stripTrailing();
+    if (isPhoneNumberValid(phoneNumber)) {
+      PhoneNumber to = new PhoneNumber(phoneNumber);
       PhoneNumber from = new PhoneNumber(twilioConfiguration.getTrialNumber());
       String messageToSend = smsRequest.getMessage();
       Message message = Message.creator(to, from, messageToSend).create();
       log.info("Sending sms from {}", twilioConfiguration.getTrialNumber());
-    } else {
+    }
+    else {
       throw new IllegalArgumentException(
-          "Phone number {} is invalid".format(smsRequest.getPhoneNumber()));
+          "Phone number {} is invalid for the United Kingdom".format(phoneNumber));
     }
   }
 
-  //TODO some form of regex valdiations
-  private boolean isPhoneNumberValid(String phoneNumber) {
 
-    return true;
-  }
 }
